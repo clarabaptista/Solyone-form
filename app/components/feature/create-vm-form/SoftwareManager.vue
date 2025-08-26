@@ -73,9 +73,11 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
                -> Machine Formateur
                -> Machine Stagiaire
 
-- Un boutton valider ou annuler pour soumettre le formulaire
+- Un bouton valider ou annuler pour soumettre le formulaire
 
 -->
+
+<!--  SoftwareManager.vue -->
 
 <template>
   <!-- <v-form v-model="validForm" @submit.prevent="submit" class="form"> -->
@@ -87,7 +89,7 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
         <v-card class="ma-2">
           <v-col>
             <v-card-title class="d-flex align-center justify-center"
-              >The question will be asked here.</v-card-title
+              >Créez un environnement.</v-card-title
             >
             <v-card-actions class="d-flex align-center justify-space-evenly">
               <!-- first button + dialog -->
@@ -106,7 +108,7 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
             />
             <SearchTool
               v-show="currentDialog === 'search-tool'"
-              @select="addTool"
+              :research-complete="researchComplete"
             />
           </v-dialog>
         </v-card>
@@ -148,7 +150,7 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
           :items="diskOptions"
           item-title="name"
           item-value="name"
-          label="Disk Space"
+          label="Espace disque"
           chips
         ></v-autocomplete>
         <div class="d-flex flex-row justify-center align-center ga-2">
@@ -157,10 +159,11 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
             :items="toolsOptions"
             item-title="name"
             item-value="name"
-            label="Tools"
+            label="Outils"
             chips
             multiple
           ></v-autocomplete>
+
           <v-btn
             color="primary"
             v-show="selectedTools.length === 0"
@@ -206,7 +209,11 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
 import SearchTool from "./dialogs/search-tool/SearchTool.vue";
 import VmTemplates from "./dialogs/vm-templates/VmTemplates.vue";
 import type { Tool, VMTemplate } from "./types";
+import { useVmTemplateStore } from "#imports";
+import { useToolStore } from "#imports";
 
+const vmTemplateStore = useVmTemplateStore();
+const searchToolStore = useToolStore();
 const dialog = ref(false);
 const currentDialog = ref("");
 
@@ -221,13 +228,57 @@ const specs = ref<VMTemplate | Record<string, null>>({
   disk: null,
 });
 
+watch(
+  () => vmTemplateStore.selectedVmTemplate,
+  (template) => {
+    if (template) {
+      specs.value.name = template.name;
+      specs.value.description = template.description;
+      specs.value.os = template.os;
+      specs.value.version = template.version;
+      specs.value.ram = template.ram;
+      specs.value.cpu = template.cpu;
+      specs.value.disk = template.disk;
+    }
+  }
+);
+
+watch(
+  () => searchToolStore.selectedTool,
+  (tool) => {
+    if (tool) {
+      toolsAdded.value.push({
+        ...tool,
+        installation: {
+          formateur: true,
+          stagiaire: true,
+        },
+      });
+      searchToolStore.selectedTool = null;
+    }
+  }
+);
+
 const selectedTools = ref<string[]>([]);
 const toolsAdded = ref<any>([]);
 
 function openDialog(dialogId: string) {
   currentDialog.value = dialogId;
   dialog.value = true;
+  if (dialogId === "search-tool") {
+    researchComplete.value = true;
+  }
 }
+
+const researchComplete = ref(false);
+// const researchValue = ref("");
+
+// function handleResearch() {
+//   //On fait un call a l'API
+//   //On update les tools
+//   // researchValue.value = "";
+//   researchComplete.value = true;
+// }
 
 function fillForm(template: VMTemplate) {
   dialog.value = false;
@@ -283,38 +334,6 @@ const ramOptions = ["2 GB", "4 GB"];
 const cpuOptions = ["2 vCPU", "1 vCPU"];
 
 const diskOptions = ["20 GB SSD", "40 GB SSD", "15 GB SSD"];
-
-// const toolsOptions = [
-//   "Microsoft Power BI",
-//   "Microsoft Excel",
-//   "Microsoft Word",
-//   "Microsoft PowerPoint",
-//   "Tableau Desktop",
-//   "LibreOffice",
-//   "Visual Studio Code",
-//   "Visual Studio",
-//   "IntelliJ IDEA",
-//   "Eclipse IDE",
-//   "Python 3.11",
-//   "Node.js",
-//   "Java JDK",
-//   ".NET Framework",
-//   "Adobe Photoshop",
-//   "Adobe Illustrator",
-//   "GIMP",
-//   "Figma Desktop",
-//   "Docker Desktop",
-//   "Git",
-//   "Postman",
-//   "MySQL",
-//   "PostgreSQL",
-//   "MongoDB",
-//   "Google Chrome",
-//   "Mozilla Firefox",
-//   "VLC Media Player",
-//   "Discord",
-//   "Microsoft Teams",
-// ];
 
 const toolsOptions: Tool[] = [
   {

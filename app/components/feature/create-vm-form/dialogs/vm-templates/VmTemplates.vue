@@ -1,9 +1,11 @@
+<!--  VmTemplate.vue -->
+
 <template>
   <v-card>
     <v-card-item>
       <v-card-title>Gabarits de VM</v-card-title>
       <v-col v-for="template in vmTemplates" :key="template.name">
-        <CardTemplate v-bind="template" @select="handleSelect" />
+        <CardTemplate v-bind="template" />
       </v-col>
     </v-card-item>
   </v-card>
@@ -13,7 +15,7 @@
 import type { VMTemplate } from "../../types";
 import CardTemplate from "./CardTemplate.vue";
 
-const emit = defineEmits(["select"]);
+// const emit = defineEmits(["select"]);
 
 const vmTemplates: VMTemplate[] = [
   {
@@ -76,7 +78,7 @@ const vmTemplates: VMTemplate[] = [
   },
 ];
 
-function handleSelect(template: VMTemplate) {
-  emit("select", template);
-}
+// function handleSelect(template: VMTemplate) {
+//   emit("select", template);
+// } 
 </script>

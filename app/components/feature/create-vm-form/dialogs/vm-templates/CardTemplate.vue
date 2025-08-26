@@ -1,3 +1,5 @@
+<!-- CardTemplate.vue -->
+
 <template>
   <v-card variant="tonal" class="ma-2" @click="selectTemplate">
     <v-card-item>
@@ -9,9 +11,9 @@
         <ul>
           <li>OS: {{ os }}</li>
           <li>Version: {{ version }}</li>
-          <li>Ram: {{ ram }}</li>
+          <li>RAM: {{ ram }}</li>
           <li>CPU: {{ cpu }}</li>
-          <li>Disque: {{ disk }}</li>
+          <li>Espace disque: {{ disk }}</li>
         </ul>
       </v-card-text>
     </v-card-item>
@@ -20,12 +22,14 @@
 
 <script setup lang="ts">
 import type { VMTemplate } from "../../types";
+import { useVmTemplateStore } from "~/stores/vmTemplate";
 
 const props = defineProps<VMTemplate>();
-
-const emit = defineEmits(["select"]);
+// const emit = defineEmits(["select"]);
+const vmTemplateStore = useVmTemplateStore();
 
 function selectTemplate() {
-  emit("select", { ...props });
+  // emit("select", { ...props });
+  vmTemplateStore.selectVmTemplate(props)
 }
 </script>

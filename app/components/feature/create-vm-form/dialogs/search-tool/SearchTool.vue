@@ -13,6 +13,11 @@
         - vCPU
         - RAM
         - Espace disque -->
+        
+        // TODO: Chercher l'outil doit devenir le bouton rechercher
+        // TODO: Outils doit remplasser nom du logiciel
+
+<!--  SearchTool.vue -->
 
 <template>
   <v-card>
@@ -20,17 +25,14 @@
       <v-card-title> Rechercher un logiciel </v-card-title>
     </v-card-item>
     <v-card-item>
-      <div class="d-flex flex-row justify-center align-center ga-2">
+      <!-- <div class="d-flex flex-row justify-center align-center ga-2">
         <v-text-field
           v-model="researchValue"
           label="Nom du Logiciel"
         ></v-text-field>
-        <v-btn color="primary" @click="handleResearch">
-          Chercher l'outil
-        </v-btn>
-      </div>
-      <v-col v-show="researchComplete" v-for="tool in tools" :key="tool.name">
-        <ResultCard v-bind="tool" @select="handleSelect" />
+      </div> -->
+      <v-col v-show="props.researchComplete" v-for="tool in tools" :key="tool.name">
+        <ResultCard v-bind="tool" />
       </v-col>
     </v-card-item>
   </v-card>
@@ -39,21 +41,26 @@
 <script setup lang="ts">
 import type { Tool } from "../../types";
 import ResultCard from "./ResultCard.vue";
+import { useToolStore } from "#imports";
 
-const researchComplete = ref(false);
-const researchValue = ref("");
-const emit = defineEmits(["select"]);
+const props = defineProps({
+  researchComplete: Boolean
+});
 
-function handleResearch() {
-  //On fait un call a l'API
-  //On update les tools
-  researchValue.value = "";
-  researchComplete.value = true;
-}
+// const researchComplete = ref(false);
+// const researchValue = ref("");
+// const emit = defineEmits(["select"]);
 
-function handleSelect(tool: Tool) {
-  emit("select", tool);
-}
+// function handleResearch() {
+//   //On fait un call a l'API
+//   //On update les tools
+//   researchValue.value = "";
+//   researchComplete.value = true;
+// }
+
+// function handleSelect(tool: Tool) {
+//   emit("select", tool);
+// }
 
 const tools = ref([
   {
@@ -223,3 +230,4 @@ const tools = ref([
   },
 ]);
 </script>
+

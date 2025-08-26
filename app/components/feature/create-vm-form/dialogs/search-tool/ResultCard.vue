@@ -1,3 +1,5 @@
+<!--  ResultCard.vue -->
+
 <template>
   <v-card variant="tonal" @click="selectTool">
     <v-card-item>
@@ -34,12 +36,15 @@
 
 <script setup lang="ts">
 import type { Tool } from "../../types";
+import { useToolStore } from "#imports";
 
 const props = defineProps<Tool>();
 
-const emit = defineEmits(["select"]);
+// const emit = defineEmits(["select"]);
+const searchToolStore = useToolStore();
 
 function selectTool() {
-  emit("select", { ...props });
+  // emit("select", { ...props });
+  searchToolStore.selectTool(props)
 }
 </script>

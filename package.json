@@ -15,8 +15,10 @@
   },
   "dependencies": {
     "@nuxt/eslint": "1.8.0",
+    "@pinia/nuxt": "^0.11.2",
     "eslint": "^9.33.0",
     "nuxt": "^3.18.1",
+    "pinia": "^3.0.3",
     "vue": "latest",
     "vuetify": "^3.9.1"
   },

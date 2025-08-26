@@ -5,6 +5,34 @@
  */
 
 // https://vuetifyjs.com/features/sass-variables/`
-// @use 'vuetify/settings' with (
-//   $color-pack: false
+// @use "vuetify/settings" with (
+//   $color-pack: true
 // );
+
+/* Ensure app background is white for both Vuetify and plain components */
+html,
+body,
+#__nuxt,
+#app {
+  height: 100%;
+  background: #ffffff !important;
+  color: #000000;
+}
+
+/* Fallback CSS variables for Vuetify components if theme variables not propagated */
+:root {
+  --v-theme-background: #ffffff;
+  --v-theme-surface: #ffffff;
+  --v-theme-primary: #1976d2;
+  --v-theme-on-primary: #ffffff;
+  --v-theme-text-primary: #000000;
+}
+
+/* A minimal normalization so native elements match Vuetify look on white */
+button,
+input,
+textarea,
+select {
+  background-color: transparent;
+  color: inherit;
+}
