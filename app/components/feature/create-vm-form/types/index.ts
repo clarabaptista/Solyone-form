@@ -1,6 +1,6 @@
 export type VMTemplate = {
   name: string;
-  description: string;
+  description?: string;
   os: string;
   version: string;
   ram: string;
@@ -11,7 +11,7 @@ export type VMTemplate = {
 export type Tool = {
   name: string;
   version: string;
-  downloadUrl: string;
+  downloadUrl?: string;
   softwareRecommendation: string;
   hardwareRequirements: {
     vcpu: string;

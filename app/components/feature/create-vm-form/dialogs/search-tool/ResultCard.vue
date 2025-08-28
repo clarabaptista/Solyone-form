@@ -45,6 +45,6 @@ const searchToolStore = useToolStore();
 
 function selectTool() {
   // emit("select", { ...props });
-  searchToolStore.selectTool(props)
+  searchToolStore.getSelectTool(props);
 }
 </script>

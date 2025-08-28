@@ -82,8 +82,8 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
 <template>
   <!-- <v-form v-model="validForm" @submit.prevent="submit" class="form"> -->
   <v-container fluid class="pa-4">
+    <SoftwareUploader @logiciel-ajoute="handleAddZip" />
     <v-row class="justify-center">
-      <!-- <v-row justify="center"> -->
       <v-col>
         <!-- card -->
         <v-card class="ma-2">
@@ -91,21 +91,10 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
             <v-card-title class="d-flex align-center justify-center"
               >Créez un environnement.</v-card-title
             >
-            <v-card-actions class="d-flex align-center justify-space-evenly">
-              <!-- first button + dialog -->
-              <v-btn color="primary" @click="openDialog('start-from-template')">
-                Démarrer depuis un template
-              </v-btn>
-            </v-card-actions>
           </v-col>
 
           <!-- dialog -->
-
           <v-dialog v-model="dialog" max-width="500">
-            <VmTemplates
-              v-show="currentDialog === 'start-from-template'"
-              @select="fillForm"
-            />
             <SearchTool
               v-show="currentDialog === 'search-tool'"
               :research-complete="researchComplete"
@@ -180,6 +169,7 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
             >Annuler</v-btn
           >
         </div>
+
         <v-data-table
           @click="handleAddTools"
           :headers="headers"
@@ -208,16 +198,29 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
 <script setup lang="ts">
 import SearchTool from "./dialogs/search-tool/SearchTool.vue";
 import VmTemplates from "./dialogs/vm-templates/VmTemplates.vue";
+
 import type { Tool, VMTemplate } from "./types";
+
 import { useVmTemplateStore } from "#imports";
 import { useToolStore } from "#imports";
 
+import SoftwareUploader from "~/components/SoftwareUploader.vue";
+
 const vmTemplateStore = useVmTemplateStore();
 const searchToolStore = useToolStore();
+
 const dialog = ref(false);
 const currentDialog = ref("");
+const researchComplete = ref(false);
 
-// ref specs
+function openDialog(dialogId: string) {
+  currentDialog.value = dialogId;
+  dialog.value = true;
+  if (dialogId === "search-tool") {
+    researchComplete.value = true;
+  }
+}
+
 const specs = ref<VMTemplate | Record<string, null>>({
   name: null,
   description: null,
@@ -228,98 +231,7 @@ const specs = ref<VMTemplate | Record<string, null>>({
   disk: null,
 });
 
-watch(
-  () => vmTemplateStore.selectedVmTemplate,
-  (template) => {
-    if (template) {
-      specs.value.name = template.name;
-      specs.value.description = template.description;
-      specs.value.os = template.os;
-      specs.value.version = template.version;
-      specs.value.ram = template.ram;
-      specs.value.cpu = template.cpu;
-      specs.value.disk = template.disk;
-    }
-  }
-);
-
-watch(
-  () => searchToolStore.selectedTool,
-  (tool) => {
-    if (tool) {
-      toolsAdded.value.push({
-        ...tool,
-        installation: {
-          formateur: true,
-          stagiaire: true,
-        },
-      });
-      searchToolStore.selectedTool = null;
-    }
-  }
-);
-
-const selectedTools = ref<string[]>([]);
-const toolsAdded = ref<any>([]);
-
-function openDialog(dialogId: string) {
-  currentDialog.value = dialogId;
-  dialog.value = true;
-  if (dialogId === "search-tool") {
-    researchComplete.value = true;
-  }
-}
-
-const researchComplete = ref(false);
-// const researchValue = ref("");
-
-// function handleResearch() {
-//   //On fait un call a l'API
-//   //On update les tools
-//   // researchValue.value = "";
-//   researchComplete.value = true;
-// }
-
-function fillForm(template: VMTemplate) {
-  dialog.value = false;
-  specs.value.name = template.name;
-  specs.value.description = template.description;
-  specs.value.os = template.os;
-  specs.value.version = template.version;
-  specs.value.ram = template.ram;
-  specs.value.cpu = template.cpu;
-  specs.value.disk = template.disk;
-}
-
-function handleAddTools() {
-  for (const toolValue of selectedTools.value) {
-    const tools = toolsOptions.filter((tool) => tool.name === toolValue);
-    for (const tool of tools) {
-      toolsAdded.value.push({
-        ...tool,
-        installation: {
-          formateur: true,
-          stagiaire: true,
-        },
-      });
-    }
-  }
-  selectedTools.value = [];
-}
-
-function addTool(tool: Tool) {
-  dialog.value = false;
-  toolsAdded.value.push({
-    ...tool,
-    installation: {
-      formateur: true,
-      stagiaire: true,
-    },
-  });
-}
-
 const osOptions = ["Linux", "Windows"];
-
 const versionsOptions = [
   { name: "Windows Server 2022", os: "Windows" },
   { name: "Windows 11 Pro", os: "Windows" },
@@ -328,13 +240,9 @@ const versionsOptions = [
   { name: "CentOS Stream 9", os: "Linux" },
   { name: "Rocky Linux 9", os: "Linux" },
 ];
-
 const ramOptions = ["2 GB", "4 GB"];
-
 const cpuOptions = ["2 vCPU", "1 vCPU"];
-
 const diskOptions = ["20 GB SSD", "40 GB SSD", "15 GB SSD"];
-
 const toolsOptions: Tool[] = [
   {
     name: "Microsoft Power BI",
@@ -657,6 +565,58 @@ const toolsOptions: Tool[] = [
   },
 ];
 
+const selectedTools = ref<string[]>([]);
+const toolsAdded = ref<any[]>([]);
+
+function addTool(tool: Tool) {
+  toolsAdded.value.push({
+    ...tool,
+    installation: {
+      formateur: true,
+      stagiaire: true,
+    },
+  });
+}
+
+function handleAddTools() {
+  for (const toolValue of selectedTools.value) {
+    const tools = toolsOptions.filter((tool) => tool.name === toolValue);
+    for (const tool of tools) {
+      if (toolsAdded.value.filter((t) => t.name === tool.name).length === 0) {
+        addTool(tool);
+      }
+    }
+  }
+  selectedTools.value = [];
+}
+
+function handleAddZip(logiciel: any) {
+  const toolToAdd: Tool = {
+    name: logiciel.nom,
+    softwareRecommendation: "",
+    version: logiciel.version,
+    hardwareRequirements: {
+      disk: "",
+      ram: "",
+      vcpu: "",
+    },
+  };
+  addTool(toolToAdd);
+}
+
+// TODO: Etudier pourquoi || {} ne fonctionne pas mais () => oui
+watch(
+  () => searchToolStore.selectedTool,
+  (tool) => {
+    if (tool) {
+      addTool(tool);
+      searchToolStore.selectedTool = null;
+      dialog.value = false;
+    }
+  }
+);
+
+// titres du tableau
 const headers = [
   { title: "Nom du logiciel", value: "name" },
   { title: "Version du logiciel", value: "version" },
@@ -668,4 +628,55 @@ const headers = [
   { title: "Installation formateur", value: "installation.formateur" },
   { title: "Installation stagiaire", value: "installation.stagiaire" },
 ];
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// VM Template
+
+watch(
+  () => vmTemplateStore.selectedVmTemplate,
+  (template) => {
+    if (template) {
+      specs.value.name = template.name;
+      specs.value.description = template.description;
+      specs.value.os = template.os;
+      specs.value.version = template.version;
+      specs.value.ram = template.ram;
+      specs.value.cpu = template.cpu;
+      specs.value.disk = template.disk;
+    }
+  }
+);
+
+function fillForm(template: VMTemplate) {
+  dialog.value = false;
+  specs.value.name = template.name;
+  specs.value.description = template.description;
+  specs.value.os = template.os;
+  specs.value.version = template.version;
+  specs.value.ram = template.ram;
+  specs.value.cpu = template.cpu;
+  specs.value.disk = template.disk;
+}
 </script>

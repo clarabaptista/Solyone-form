@@ -6,7 +6,7 @@ export const useToolStore = defineStore("searchTool", {
     selectedTool: null as Tool | null,
   }),
   actions: {
-    selectTool(tool: Tool) {
+    getSelectTool(tool: Tool) {
       this.selectedTool = tool;
     },
     clearTool() {
