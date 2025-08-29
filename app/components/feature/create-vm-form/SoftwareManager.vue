@@ -81,12 +81,11 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
 
 <template>
   <!-- <v-form v-model="validForm" @submit.prevent="submit" class="form"> -->
-  <v-container fluid class="pa-4">
-    <SoftwareUploader @logiciel-ajoute="handleAddZip" />
+  <v-container class="pa-4">
     <v-row class="justify-center">
       <v-col>
         <!-- card -->
-        <v-card class="ma-2">
+        <v-card id="card-title" class="ma-2" >
           <v-col>
             <v-card-title class="d-flex align-center justify-center"
               >Créez un environnement.</v-card-title
@@ -101,48 +100,78 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
             />
           </v-dialog>
         </v-card>
+        <br/>
+        <v-row>
+          <v-col cols="6" pa="2">
+            <v-autocomplete
+              v-model="specs.os"
+              :items="osOptions"
+              item-title="name"
+              item-value="name"
+              label="OS"
+              chips
+              variant="outlined"
+              density="comfortable"
+            ></v-autocomplete>
+          </v-col>
 
-        <v-autocomplete
-          v-model="specs.os"
-          :items="osOptions"
-          item-title="name"
-          item-value="name"
-          label="OS"
-          chips
-        ></v-autocomplete>
-        <v-autocomplete
-          v-model="specs.version"
-          :items="versionsOptions.filter((version) => version.os === specs.os)"
-          item-title="name"
-          item-value="name"
-          label="Version"
-          chips
-        ></v-autocomplete>
-        <v-autocomplete
-          v-model="specs.cpu"
-          :items="cpuOptions"
-          item-title="name"
-          item-value="name"
-          label="CPU"
-          chips
-        ></v-autocomplete>
-        <v-autocomplete
-          v-model="specs.ram"
-          :items="ramOptions"
-          item-title="name"
-          item-value="name"
-          label="RAM"
-          chips
-        ></v-autocomplete>
-        <v-autocomplete
-          v-model="specs.disk"
-          :items="diskOptions"
-          item-title="name"
-          item-value="name"
-          label="Espace disque"
-          chips
-        ></v-autocomplete>
-        <div class="d-flex flex-row justify-center align-center ga-2">
+          <v-col cols="6">
+            <v-autocomplete
+              v-model="specs.version"
+              :items="versionsOptions.filter((version) => version.os === specs.os)"
+              item-title="name"
+              item-value="name"
+              label="Version"
+              chips
+              variant="outlined"
+              density="comfortable"
+            ></v-autocomplete>
+          </v-col>
+
+          <v-col cols="6">
+            <v-autocomplete
+              v-model="specs.cpu"
+              :items="cpuOptions"
+              item-title="name"
+              item-value="name"
+              label="CPU"
+              chips
+              variant="outlined"
+              density="comfortable"
+            ></v-autocomplete>
+          </v-col>
+
+          <v-col cols="6">
+            <v-autocomplete
+              v-model="specs.ram"
+              :items="ramOptions"
+              item-title="name"
+              item-value="name"
+              label="RAM"
+              chips
+              variant="outlined"
+              density="comfortable"
+            ></v-autocomplete>
+          </v-col>
+
+          <v-col cols="6">
+            <v-autocomplete
+              v-model="specs.disk"
+              :items="diskOptions"
+              item-title="name"
+              item-value="name"
+              label="Espace disque"
+              chips
+              variant="outlined"
+              density="comfortable"
+              ></v-autocomplete>
+            </v-col>
+          <v-col cols="6">
+            <SoftwareUploader @logiciel-ajoute="handleAddZip" />
+          </v-col>
+
+        </v-row>
+        <div class="d-flex flex-row justify-center align-center ga-2"> 
           <v-autocomplete
             v-model="selectedTools"
             :items="toolsOptions"
@@ -151,24 +180,32 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
             label="Outils"
             chips
             multiple
+            variant="outlined"
+            density="comfortable"
           ></v-autocomplete>
 
           <v-btn
-            color="primary"
+            color="#667EEA"
+            variant="flat"
             v-show="selectedTools.length === 0"
             @click="openDialog('search-tool')"
             >Rechercher</v-btn
           >
           <v-btn
-            color="green"
+            variant="tonal"
+            v-show="selectedTools.length !== 0"
+            @click="selectedTools = []"
+            >Annuler</v-btn
+          >
+          <v-btn
+            color="#667EEA"
+            variant="flat"
             v-show="selectedTools.length !== 0"
             @click="handleAddTools"
             >Ajouter</v-btn
           >
-          <v-btn v-show="selectedTools.length !== 0" @click="selectedTools = []"
-            >Annuler</v-btn
-          >
         </div>
+
 
         <v-data-table
           @click="handleAddTools"
@@ -191,6 +228,7 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
       </v-col>
     </v-row>
   </v-container>
+</br>
   {{ JSON.stringify(toolsAdded) }}
   <!-- </v-form> -->
 </template>
@@ -595,11 +633,7 @@ function handleAddZip(logiciel: any) {
     name: logiciel.nom,
     softwareRecommendation: "",
     version: logiciel.version,
-    hardwareRequirements: {
-      disk: "",
-      ram: "",
-      vcpu: "",
-    },
+    hardwareRequirements: logiciel.hardwareRequirements
   };
   addTool(toolToAdd);
 }
@@ -680,3 +714,70 @@ function fillForm(template: VMTemplate) {
   specs.value.disk = template.disk;
 }
 </script>
+
+<style>
+/* Container principal */
+.v-container {
+  width: 100%;
+}
+
+/* Cartes */
+#card-title {
+  background: #7886FF;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  height: 80px;
+}
+
+.v-card {
+  border-radius: 8px !important;
+}
+
+.v-btn {
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px;
+}
+
+.v-btn:hover {
+  filter: brightness(1.05);
+}
+
+.v-text-field .v-field,
+.v-autocomplete .v-field,
+.v-file-input .v-field,
+.v-select .v-field {
+  border-radius: 8px !important;
+  
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+.v-autocomplete,
+.v-text-field {
+  margin-bottom: none;
+}
+
+.v-data-table {
+  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.v-data-table-header {
+  font-weight: 600;
+}
+
+.v-alert {
+  border-radius: 12px !important;
+  font-size: 14px;
+  padding: 10px 14px;
+}
+
+.d-flex.flex-row.justify-center.align-center.ga-2 {
+  margin-top: 16px;
+}
+</style>

@@ -1,9 +1,7 @@
-<!-- composant de nana à intégrer -->
-
 <template>
   <div class="software-upload-component">
     <!-- Bouton principal pour ouvrir le dialog -->
-    <v-btn
+    <v-btn 
       :disabled="!administrateurAutorise"
       color="#667eea"
       variant="outlined"
@@ -102,13 +100,14 @@
         <v-card-actions class="pa-4">
           <v-spacer />
 
-          <v-btn variant="outlined" @click="annuler"> Annuler </v-btn>
+          <v-btn variant="tonal" @click="annuler"> Annuler </v-btn>
 
           <v-btn
             color="#667eea"
             :disabled="!peutAjouter"
             :loading="enCoursAjout"
             @click="ajouter"
+            variant="flat"
           >
             Ajouter
           </v-btn>
@@ -149,7 +148,11 @@ const logicielData = ref({
   version: "",
   fichier: null,
   osTarget: "windows", // OS par défaut
-});
+  hardwareRequirements: {
+    vcpu: "2 cores",
+    ram: "4 GB",
+    disk: "3 GB"
+}});
 
 // Computed
 const peutAjouter = computed(() => {
