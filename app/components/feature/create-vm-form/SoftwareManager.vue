@@ -84,22 +84,14 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
   <v-container class="pa-4">
     <v-row class="justify-center">
       <v-col>
-        <!-- card -->
-        <v-card id="card-title" class="ma-2" >
-          <v-col>
-            <v-card-title class="d-flex align-center justify-center"
-              >Créez un environnement.</v-card-title
-            >
-          </v-col>
-
-          <!-- dialog -->
-          <v-dialog v-model="dialog" max-width="500">
-            <SearchTool
-              v-show="currentDialog === 'search-tool'"
-              :research-complete="researchComplete"
-            />
-          </v-dialog>
-        </v-card>
+        <h1>Créez un environnement</h1>
+        <!-- dialog -->
+        <v-dialog v-model="dialog" max-width="500">
+          <SearchTool
+            v-show="currentDialog === 'search-tool'"
+            :research-complete="researchComplete"
+          />
+        </v-dialog>
         <br/>
         <v-row>
           <v-col cols="6" pa="2">
@@ -716,12 +708,11 @@ function fillForm(template: VMTemplate) {
 </script>
 
 <style>
-/* Container principal */
 .v-container {
   width: 100%;
 }
 
-/* Cartes */
+
 #card-title {
   background: #7886FF;
   color: white;
