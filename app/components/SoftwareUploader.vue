@@ -1,14 +1,12 @@
 <template>
   <div class="software-upload-component">
     <!-- Bouton principal pour ouvrir le dialog -->
-    <v-btn 
+    <v-btn
       :disabled="!administrateurAutorise"
       color="#667eea"
-      variant="outlined"
-      size="large"
+      variant="flat"
       prepend-icon="mdi-cloud-upload-outline"
       @click="ouvrirDialog"
-      class="mb-4"
     >
       Téléverser un logiciel
     </v-btn>
@@ -100,9 +98,10 @@
         <v-card-actions class="pa-4">
           <v-spacer />
 
-          <v-btn variant="tonal" @click="annuler"> Annuler </v-btn>
+          <v-btn id="button" variant="tonal" @click="annuler"> Annuler </v-btn>
 
           <v-btn
+            id="button"
             color="#667eea"
             :disabled="!peutAjouter"
             :loading="enCoursAjout"
@@ -151,8 +150,9 @@ const logicielData = ref({
   hardwareRequirements: {
     vcpu: "2 cores",
     ram: "4 GB",
-    disk: "3 GB"
-}});
+    disk: "3 GB",
+  },
+});
 
 // Computed
 const peutAjouter = computed(() => {
@@ -182,6 +182,11 @@ const reinitialiserFormulaire = () => {
     version: "",
     fichier: null,
     osTarget: "windows",
+    hardwareRequirements: {
+      vcpu: "2 cores",
+      ram: "4 GB",
+      disk: "3 GB",
+    },
   };
 
   if (uploadForm.value) {
@@ -194,6 +199,7 @@ const analyserZIP = async (files: File[]) => {
   if (!files || files.length === 0) return;
 
   const file = files[0];
+  if (!file) return;
 
   // Vérifier si ZIP
   if (!file.name.endsWith(".zip") && file.type !== "application/zip") {
@@ -211,7 +217,7 @@ const analyserZIP = async (files: File[]) => {
     const osSelectionne = logicielData.value.osTarget;
 
     // Extensions compatibles selon l'OS
-    const extensionsCompatibles = {
+    const extensionsCompatibles: { [key: string]: string[] } = {
       windows: [".exe", ".msi"],
       debian: [".deb", ".tar.gz", ".tar.xz", ".sh", ".appimage"],
     };
@@ -293,6 +299,11 @@ const ajouter = async () => {
 }
 
 .v-btn {
+  text-transform: none !important;
+  margin-bottom: none !important;
+}
+
+#button {
   border-radius: 8px !important;
   text-transform: none !important;
   font-weight: 600 !important;

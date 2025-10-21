@@ -1,4 +1,4 @@
-<!-- CardTemplate.vue -->
+<!-- CardTemplate.vue
 
 <template>
   <v-card variant="tonal" class="ma-2" @click="selectTemplate">
@@ -32,4 +32,4 @@ function selectTemplate() {
   // emit("select", { ...props });
   vmTemplateStore.selectVmTemplate(props)
 }
-</script>
+</script> -->

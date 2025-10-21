@@ -35,16 +35,17 @@
 </template>
 
 <script setup lang="ts">
+import { useDialog } from "~/stores/dialogStore";
 import type { Tool } from "../../types";
-import { useToolStore } from "#imports";
+import { useToolStore } from "@/stores/searchTool";
 
 const props = defineProps<Tool>();
 
-// const emit = defineEmits(["select"]);
 const searchToolStore = useToolStore();
+const dialogStore = useDialog();
 
 function selectTool() {
-  // emit("select", { ...props });
-  searchToolStore.getSelectTool(props);
+  searchToolStore.setSelectTool(props);
+  dialogStore.closeDialog();
 }
 </script>
