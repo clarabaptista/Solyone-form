@@ -1,30 +1,10 @@
-<!-- 
-- Quand on clique sur Chercher l'outil -> Ça ouvre un dialog avec différentes propositions de logiciels sous forme de card
- (en colonne)
--> En bas du dialog il y aura deux boutons
-    -> Ajouter 
-    -> Annuler
--> On pourra choisir le logiciel en cliquant sur sa card (au click la bordure changera de couleur pour montrer qu'on a cliqué)
-    - Nom du logiciel
-    - Version du logiciel
-    - URL de téléchargement
-    - Recommandation logiciel
-    - Recommandation matériel :
-        - vCPU
-        - RAM
-        - Espace disque -->
-
 <!--  SearchTool.vue -->
 
 <template>
   <v-card>
     <v-card-item>
       <v-card-title> Rechercher un logiciel </v-card-title>
-      <v-col
-        v-show="props.researchComplete"
-        v-for="tool in tools"
-        :key="tool.name"
-      >
+      <v-col v-for="tool in tools" :key="tool.name">
         <ResultCard v-bind="tool" />
       </v-col>
     </v-card-item>
@@ -34,27 +14,9 @@
 <script setup lang="ts">
 import ResultCard from "./ResultCard.vue";
 
-const props = defineProps({
-  researchComplete: Boolean,
-});
-
-// const researchComplete = ref(false);
-// const researchValue = ref("");
-// const emit = defineEmits(["select"]);
-
-// function handleResearch() {
-//   //On fait un call a l'API
-//   //On update les tools
-//   researchValue.value = "";
-//   researchComplete.value = true;
-// }
-
-// function handleSelect(tool: Tool) {
-//   emit("select", tool);
-// }
-
 const tools = ref([
   {
+    id: "test1",
     name: "React",
     version: "18.2.0",
     downloadUrl: "https://reactjs.org/",
@@ -66,6 +28,7 @@ const tools = ref([
     },
   },
   {
+    id: "test2",
     name: "Vue.js",
     version: "3.3.4",
     downloadUrl: "https://vuejs.org/",
@@ -77,6 +40,7 @@ const tools = ref([
     },
   },
   {
+    id: "test",
     name: "Angular",
     version: "16.2.0",
     downloadUrl: "https://angular.io/",
