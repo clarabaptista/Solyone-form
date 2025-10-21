@@ -1,14 +1,24 @@
 export type VMTemplate = {
-  name: string;
+  name?: string;
+  description?: string;
+  os?: string;
+  version?: string;
+  ram?: string;
+  cpu?: string;
+  disk?: string;
+};
+export type VMTemplateStrict = {
+  name?: string;
   description?: string;
   os: string;
-  version: string;
+  version?: string;
   ram: string;
   cpu: string;
   disk: string;
 };
 
 export type Tool = {
+  id: string;
   name: string;
   version: string;
   downloadUrl?: string;
@@ -17,5 +27,9 @@ export type Tool = {
     vcpu: string;
     ram: string;
     disk: string;
+  };
+  installation?: {
+    formateur: boolean;
+    stagiaire: boolean;
   };
 };
