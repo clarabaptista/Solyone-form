@@ -1,12 +1,10 @@
 <!--  SoftwareManager.vue -->
 
 <template>
-  <!-- <v-form v-model="validForm" @submit.prevent="submit" class="form"> -->
   <v-container class="pa-4">
     <v-row class="justify-center">
       <v-col>
-        <!-- card -->
-        <h1>Créez un environnement</h1>
+        <h1 class="title">Créez un environnement</h1>
 
         <!-- dialog -->
         <v-dialog v-model="dialog" max-width="500">
@@ -15,7 +13,7 @@
             :research-complete="researchComplete"
           />
         </v-dialog>
-
+ 
         <br />
         <v-row>
           <v-col cols="6" pa="2">
@@ -68,6 +66,7 @@
               label="RAM"
               chips
               variant="outlined"
+              density="comfortable"
             ></v-autocomplete>
           </v-col>
 
@@ -82,9 +81,6 @@
               variant="outlined"
               density="comfortable"
             ></v-autocomplete>
-          </v-col>
-          <v-col cols="6">
-            <SoftwareUploader @logiciel-ajoute="handleAddZip" />
           </v-col>
         </v-row>
         <div class="d-flex flex-row justify-center align-center ga-2">
@@ -108,20 +104,20 @@
             >Rechercher</v-btn
           >
           <v-btn
-            color="#667EEA"
-            variant="flat"
-            v-show="selectedTools.length !== 0"
-            @click="handleAddTools"
-            >Ajouter</v-btn
+          variant="tonal"
+          v-show="selectedTools.length !== 0"
+          @click="selectedTools = []"
+          >Annuler</v-btn
           >
           <v-btn
-            variant="tonal"
-            v-show="selectedTools.length !== 0"
-            @click="selectedTools = []"
-            >Annuler</v-btn
+          color="#667EEA"
+          variant="flat"
+          v-show="selectedTools.length !== 0"
+          @click="handleAddTools"
+          >Ajouter</v-btn
           >
+          <SoftwareUploader style="width: fit-content;" @logiciel-ajoute="handleAddZip" />
         </div>
-
         <v-data-table
           @click="handleAddTools"
           :headers="headers"
@@ -140,11 +136,16 @@
             ></v-checkbox-btn>
           </template>
         </v-data-table>
+        <v-row>
+          <v-col class="d-flex flex-row align-center ga-2">
+            <v-btn variant="tonal" @click="selectedTools = []">Annuler</v-btn>
+            <v-btn color="#667EEA" variant="flat">Créer une VM</v-btn>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
   {{ JSON.stringify(toolsAdded) }}
-  <!-- </v-form> -->
 </template>
 
 <script setup lang="ts">
@@ -576,72 +577,15 @@ const headers = [
   { title: "Installation formateur", value: "installation.formateur" },
   { title: "Installation stagiaire", value: "installation.stagiaire" },
 ];
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-// VM Template
-
-watch(
-  () => vmTemplateStore.selectedVmTemplate,
-  (template) => {
-    if (template) {
-      specs.value.name = template.name;
-      specs.value.description = template.description;
-      specs.value.os = template.os;
-      specs.value.version = template.version;
-      specs.value.ram = template.ram;
-      specs.value.cpu = template.cpu;
-      specs.value.disk = template.disk;
-    }
-  }
-);
-
-function fillForm(template: VMTemplate) {
-  dialog.value = false;
-  specs.value.name = template.name;
-  specs.value.description = template.description;
-  specs.value.os = template.os;
-  specs.value.version = template.version;
-  specs.value.ram = template.ram;
-  specs.value.cpu = template.cpu;
-  specs.value.disk = template.disk;
-}
 </script>
 
 <style>
-/* Container principal */
 .v-container {
   width: 100%;
 }
 
-/* Cartes */
-#card-title {
-  background: #7886ff;
-  color: white;
-  font-weight: bold;
-  text-align: center;
-  height: 80px;
+.title {
+  color: #667eea;
 }
 
 .v-card {
@@ -650,7 +594,7 @@ function fillForm(template: VMTemplate) {
 
 .v-btn {
   border-radius: 8px;
-  text-transform: uppercase;
+  text-transform: none;
   font-weight: 600 !important;
   letter-spacing: 0.5px;
 }
@@ -682,7 +626,8 @@ function fillForm(template: VMTemplate) {
 }
 
 .v-data-table-header {
-  font-weight: 600;
+  /* TODO: vérifier l'activation du bold */
+  font-weight: 600 !important;
 }
 
 .v-alert {
