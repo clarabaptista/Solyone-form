@@ -1,82 +1,3 @@
-<!--
-
-Formulaire
-1er screen
-// Les deux options sont des boutons sous forme de card //
-1. Créer une vm a partir d'un gabarit
-2. Créer une vm a partir de rien
-
-Quand on clique sur 1 ->
-Ça ouvre un dialog qui te propose différents gabarits (sous forme de card les unes a coté des autres)
-Au dessus de cette liste on a une barre de recherche (non fonctinnelle pour l'instant) dans laquelle on pourra faire 
-des recherches sur le gabarit qu'on veut (petit, linux, etc...)
-
-Quand on clique sur un gabarit ça préremplit l'écran 2
-
-
-2ème screen (Si on a appuyé sur 2 ou qu'on a fini l'étape 1)
-
--> On a plusieurs sections
-
-1. Gabarit
-    - OS + Version
-    - vCPU
-    - RAM
-    - Espace disque
-2. Logiciels
-    - Une liste déroulante (autocomplete en multiple)
-        - Si on trouve le logiciel qu'on cherche on peut cliquer dessus tout simplement, si on cherche quelque chose et qu'il y a aucune data trouvée,
-          un choix "Chercher l'outil" sera proposé en bleu (dans le select)
-            - Quand on clique sur Chercher l'outil -> Ça ouvre un dialog avec différentes propositions de logiciels sous forme de card (en colonne)
-                -> En bas du dialog il y aura deux boutons
-                    -> Ajouter 
-                    -> Annuler
-                -> On pourra choisir le logiciel en cliquant sur sa card (au click la bordure changera de couleur pour montrer qu'on a cliqué)
-                    - Nom du logiciel
-                    - Version du logiciel
-                    - URL de téléchargement
-                    - Recommandation logiciel
-                    - Recommandation matériel :
-                        - vCPU
-                        - RAM
-                        - Espace disque
-
-        - Un bouton a droite de celle-ci avec marqué "Ajouter"
-            - Quand on clique sur Ajouter le champ se re met a 0 et les items choisis se mettent dans la table (SUITE)
-        - Un autre boutton a droite d'ajouter avec marqué "Annuler"
-            - Quand on clique sur Annuler le champ se re met a 0
-    
-    
-    - En dessous de la liste déroulante
-        - Un tableau a plusieurs colonnes
-            -> Nom du logiciel
-            -> Version du logiciel
-            -> URL de téléchargement (cliquable et modifiable)
-                -> attention : toujours activé côté administrateur pour la modification. (POSER QUESTION COMMENT ON REPÈRE UN ADMIN)
-                - Modifiable
-                    - Si c'est modifiable alors le champ est un bouton qui, au click ouvrira un dialog
-                        - Il y aura 2 champs
-                            -> Old URL
-                            -> New url (modifiable (input))
-                        - Il faudra appuyer sur un bouton valider pour confirmer
-                            -> Il y aura une vérification a l'aide de l'ia sur le nouveau lien (CALL API)
-                                -> Si le nouveau lien est le même que l'ancien et qu'un lien dans le catalogue alors on ne fait pas la vérification (dur)
-            -> Recommandation logiciel
-                -> Au click du logiciel ça propose de l'ajouter au formulaire avec une modal
-                    -> "Voulez vous ajouter X ?"
-            -> vCPU Recommandé
-            -> RAM Recommandé
-            -> Espace disque Recommandé
-            -> ID de l'outil / Null si l'outil vient de l'ia
-            -> Où installer (select)
-               -> Par défaut : Machine Formateur & Stagiaire
-               -> Machine Formateur
-               -> Machine Stagiaire
-
-- Un bouton valider ou annuler pour soumettre le formulaire
-
--->
-
 <!--  SoftwareManager.vue -->
 
 <template>
@@ -84,7 +5,9 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
   <v-container class="pa-4">
     <v-row class="justify-center">
       <v-col>
+        <!-- card -->
         <h1>Créez un environnement</h1>
+
         <!-- dialog -->
         <v-dialog v-model="dialog" max-width="500">
           <SearchTool
@@ -92,7 +15,8 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
             :research-complete="researchComplete"
           />
         </v-dialog>
-        <br/>
+
+        <br />
         <v-row>
           <v-col cols="6" pa="2">
             <v-autocomplete
@@ -110,7 +34,9 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
           <v-col cols="6">
             <v-autocomplete
               v-model="specs.version"
-              :items="versionsOptions.filter((version) => version.os === specs.os)"
+              :items="
+                versionsOptions.filter((version) => version.os === specs.os)
+              "
               item-title="name"
               item-value="name"
               label="Version"
@@ -142,7 +68,6 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
               label="RAM"
               chips
               variant="outlined"
-              density="comfortable"
             ></v-autocomplete>
           </v-col>
 
@@ -156,14 +81,13 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
               chips
               variant="outlined"
               density="comfortable"
-              ></v-autocomplete>
-            </v-col>
+            ></v-autocomplete>
+          </v-col>
           <v-col cols="6">
             <SoftwareUploader @logiciel-ajoute="handleAddZip" />
           </v-col>
-
         </v-row>
-        <div class="d-flex flex-row justify-center align-center ga-2"> 
+        <div class="d-flex flex-row justify-center align-center ga-2">
           <v-autocomplete
             v-model="selectedTools"
             :items="toolsOptions"
@@ -184,20 +108,19 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
             >Rechercher</v-btn
           >
           <v-btn
-            variant="tonal"
-            v-show="selectedTools.length !== 0"
-            @click="selectedTools = []"
-            >Annuler</v-btn
-          >
-          <v-btn
             color="#667EEA"
             variant="flat"
             v-show="selectedTools.length !== 0"
             @click="handleAddTools"
             >Ajouter</v-btn
           >
+          <v-btn
+            variant="tonal"
+            v-show="selectedTools.length !== 0"
+            @click="selectedTools = []"
+            >Annuler</v-btn
+          >
         </div>
-
 
         <v-data-table
           @click="handleAddTools"
@@ -220,7 +143,6 @@ Quand on clique sur un gabarit ça préremplit l'écran 2
       </v-col>
     </v-row>
   </v-container>
-</br>
   {{ JSON.stringify(toolsAdded) }}
   <!-- </v-form> -->
 </template>
@@ -231,8 +153,8 @@ import VmTemplates from "./dialogs/vm-templates/VmTemplates.vue";
 
 import type { Tool, VMTemplate } from "./types";
 
-import { useVmTemplateStore } from "#imports";
-import { useToolStore } from "#imports";
+import { useVmTemplateStore } from "@/stores/vmTemplate";
+import { useToolStore } from "@/stores/searchTool";
 
 import SoftwareUploader from "~/components/SoftwareUploader.vue";
 
@@ -625,7 +547,7 @@ function handleAddZip(logiciel: any) {
     name: logiciel.nom,
     softwareRecommendation: "",
     version: logiciel.version,
-    hardwareRequirements: logiciel.hardwareRequirements
+    hardwareRequirements: logiciel.hardwareRequirements,
   };
   addTool(toolToAdd);
 }
@@ -708,13 +630,14 @@ function fillForm(template: VMTemplate) {
 </script>
 
 <style>
+/* Container principal */
 .v-container {
   width: 100%;
 }
 
-
+/* Cartes */
 #card-title {
-  background: #7886FF;
+  background: #7886ff;
   color: white;
   font-weight: bold;
   text-align: center;
@@ -741,7 +664,7 @@ function fillForm(template: VMTemplate) {
 .v-file-input .v-field,
 .v-select .v-field {
   border-radius: 8px !important;
-  
+
   margin-bottom: 0px;
   margin-top: 0px;
 }
